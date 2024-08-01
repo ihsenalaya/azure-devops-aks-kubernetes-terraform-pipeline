@@ -73,7 +73,7 @@ stages:
             inputs:
               command: init
               backendType: azurerm
-              workingDirectory: $(Pipeline.Workspace)/terraform-manifests
+              workingDirectory: $(Pipeline.Workspace)/terraform-manifests-out
               # Service connection to authorize backend access. Supports Subscription & Management Group Scope
               backendServiceArm: 'terraform-aks-azurerm-svc-con'
               backendAzureRmResourceGroupName: 'terraform-storage-rg'
@@ -86,7 +86,7 @@ stages:
           - task: TerraformCLI@2
             inputs:
               command: 'plan'
-              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests'
+              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
               environmentServiceName: 'terraform-aks-azurerm-svc-con'
               commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath)  -out $(Pipeline.Workspace)/terraform-manifests-out/$(DEV_ENVIRONMENT)-$(Build.BuildId).outvar environment=$(DEV_ENVIRONMENT)'
               allowTelemetryCollection: false
