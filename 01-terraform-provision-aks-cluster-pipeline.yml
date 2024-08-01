@@ -59,3 +59,27 @@ stages:
     pool:
       vmImage: ubuntu-latest
     environment: $(DEV_ENVIRONMENT)
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+          - task: DownloadSecureFile@1
+            displayName: download ssh
+            inputs:
+              secureFile: 'aks-terraform-devops-ssh-key-ububtu.pub'
+          - task: TerraformCLI@0
+            displayName: 'terraform init'
+            inputs:
+              command: init
+              backendType: azurerm
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform-manifests
+              # Service connection to authorize backend access. Supports Subscription & Management Group Scope
+              backendServiceArm: 'terraform-aks-azurerm-svc-con'
+              backendAzureRmResourceGroupName: 'terraform-storage-rg'
+              backendAzureRmStorageAccountName: 'terraformtfstate1844'
+              # azure blob container to store the state file
+              backendAzureRmContainerName: 'tfstatefiles'
+              # azure blob file name
+              backendAzureRmKey: aks-base.tfstate
+              allowTelemetryCollection: false
+    
