@@ -34,14 +34,8 @@ stages:
         workingDirectory: $(System.DefaultWorkingDirectory)/terraform-manifests
         # Service connection to authorize backend access. Supports Subscription & Management Group Scope
         backendServiceArm: 'terraform-aks-azurerm-svc-con'
-        # create backend storage account if doesn't exist
-        ensureBackend: true
         backendAzureRmResourceGroupName: 'terraform-storage-rg'
-        # azure location shortname of the backend resource group and storage account
-        backendAzureRmResourceGroupLocation: 'eastus'
-        backendAzureRmStorageAccountName: 'my-backend-storage-account'
-        # azure storage account sku, used when creating the storage account
-        backendAzureRmStorageAccountSku: 'Standard_RAGRS'
+        backendAzureRmStorageAccountName: 'terraformtfstate1844'
         # azure blob container to store the state file
         backendAzureRmContainerName: 'tfstatefiles'
         # azure blob file name
