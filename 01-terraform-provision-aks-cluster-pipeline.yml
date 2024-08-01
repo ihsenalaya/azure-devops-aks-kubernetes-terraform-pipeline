@@ -52,5 +52,10 @@ stages:
         command: 'validate'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
         allowTelemetryCollection: false
-    
-    
+- stage: DeployAKScluster
+  jobs:
+  - deployment: DeployDevAKScluster
+    displayName: DeployDevAKScluster
+    pool:
+      vmImage: ubuntu-latest
+    environment: $(DEV_ENVIRONMENT)
