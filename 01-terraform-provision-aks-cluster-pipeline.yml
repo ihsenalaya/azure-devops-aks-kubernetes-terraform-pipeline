@@ -41,7 +41,7 @@ stages:
         backendAzureRmResourceGroupName: 'terraform-storage-rg'
         backendAzureRmStorageAccountName: 'terraformtfstate1844'
         backendAzureRmContainerName: 'tfstatefiles'
-        backendAzureRmKey: 'aks-base.tfstate'
+        backendAzureRmKey: 'terraform-custom-vnet.tfstate'
     # - task: TerraformCLI@0
     #   displayName: 'terraform init'
     #   inputs:
@@ -81,11 +81,11 @@ stages:
      runOnce:
        deploy:
          steps:
-          # - task: DownloadSecureFile@1
-          #   displayName: download ssh
-          #   name: sshkey
-          #   inputs:
-          #     secureFile: 'aks-terraform-devops-ssh-key-ububtu.pub'
+          - task: DownloadSecureFile@1
+            displayName: download ssh
+            name: sshkey
+            inputs:
+              secureFile: 'aks-terraform-devops-ssh-key-ububtu.pub'
           # - task: TerraformCLI@0
           #   displayName: 'terraform init'
           #   inputs:
