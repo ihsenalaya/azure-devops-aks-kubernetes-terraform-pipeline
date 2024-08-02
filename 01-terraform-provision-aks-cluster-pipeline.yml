@@ -24,34 +24,52 @@ stages:
     - task: PublishPipelineArtifact@1
       displayName: Publish Artifacts
       inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+        targetPath: '$(System.DefaultWorkingDirectory)/manifest'
         artifact: 'terraform-manifests-out'
         publishLocation: 'pipeline'
-    - task: TerraformInstaller@0
-      displayName: Terraform Install
+    # - task: TerraformInstaller@0
+    #   displayName: Terraform Install
+    #   inputs:
+    #     terraformVersion: 'latest'
+    - task: TerraformTaskV4@4
       inputs:
-        terraformVersion: 'latest'
-    - task: TerraformCLI@0
-      displayName: 'terraform init'
-      inputs:
-        command: init
-        backendType: azurerm
-        workingDirectory: $(System.DefaultWorkingDirectory)/terraform-manifests
-        # Service connection to authorize backend access. Supports Subscription & Management Group Scope
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/manifest'
+        backendAzureRmUseEntraIdForAuthentication: true
         backendServiceArm: 'terraform-aks-azurerm-svc-con'
         backendAzureRmResourceGroupName: 'terraform-storage-rg'
         backendAzureRmStorageAccountName: 'terraformtfstate1844'
-        # azure blob container to store the state file
         backendAzureRmContainerName: 'tfstatefiles'
-        # azure blob file name
-        backendAzureRmKey: aks-base.tfstate
-        allowTelemetryCollection: false
-    - task: TerraformCLI@2
-      displayName: Terraform Validate
+        backendAzureRmKey: 'aks-base.tfstate'
+    # - task: TerraformCLI@0
+    #   displayName: 'terraform init'
+    #   inputs:
+    #     command: init
+    #     backendType: azurerm
+    #     workingDirectory: $(System.DefaultWorkingDirectory)/manifest
+    #     # Service connection to authorize backend access. Supports Subscription & Management Group Scope
+    #     backendServiceArm: 'terraform-aks-azurerm-svc-con'
+    #     backendAzureRmResourceGroupName: 'terraform-storage-rg'
+    #     backendAzureRmStorageAccountName: 'terraformtfstate1844'
+    #     # azure blob container to store the state file
+    #     backendAzureRmContainerName: 'tfstatefiles'
+    #     # azure blob file name
+    #     backendAzureRmKey: aks-base.tfstate
+    #     allowTelemetryCollection: false
+     
+    
+    # - task: TerraformCLI@2
+    #   displayName: Terraform Validate
+    #   inputs:
+    #     command: 'validate'
+    #     workingDirectory: '$(System.DefaultWorkingDirectory)/manifest'
+    #     allowTelemetryCollection: false
+    - task: TerraformTaskV4@4
       inputs:
+        provider: 'azurerm'
         command: 'validate'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
-        allowTelemetryCollection: false
+        workingDirectory: '$(System.DefaultWorkingDirectory)/manifest'
 - stage: DeployAKScluster
   jobs:
   - deployment: DeployDevAKScluster
@@ -63,36 +81,61 @@ stages:
      runOnce:
        deploy:
          steps:
-          - task: DownloadSecureFile@1
-            displayName: download ssh
-            name: sshkey
+          # - task: DownloadSecureFile@1
+          #   displayName: download ssh
+          #   name: sshkey
+          #   inputs:
+          #     secureFile: 'aks-terraform-devops-ssh-key-ububtu.pub'
+          # - task: TerraformCLI@0
+          #   displayName: 'terraform init'
+          #   inputs:
+          #     command: init
+          #     backendType: azurerm
+          #     workingDirectory: $(Pipeline.Workspace)/terraform-manifests-out
+          #     # Service connection to authorize backend access. Supports Subscription & Management Group Scope
+          #     backendServiceArm: 'terraform-aks-azurerm-svc-con'
+          #     backendAzureRmResourceGroupName: 'terraform-storage-rg'
+          #     backendAzureRmStorageAccountName: 'terraformtfstate1844'
+          #     # azure blob container to store the state file
+          #     backendAzureRmContainerName: 'tfstatefiles'
+          #     # azure blob file name
+          #     backendAzureRmKey: aks-$(DEV_ENVIRONMENT).tfstate
+          #     allowTelemetryCollection: false
+          
+          - task: TerraformTaskV4@4
             inputs:
-              secureFile: 'aks-terraform-devops-ssh-key-ububtu.pub'
-          - task: TerraformCLI@0
-            displayName: 'terraform init'
-            inputs:
-              command: init
-              backendType: azurerm
-              workingDirectory: $(Pipeline.Workspace)/terraform-manifests-out
-              # Service connection to authorize backend access. Supports Subscription & Management Group Scope
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
+              backendAzureRmUseEntraIdForAuthentication: true
               backendServiceArm: 'terraform-aks-azurerm-svc-con'
               backendAzureRmResourceGroupName: 'terraform-storage-rg'
               backendAzureRmStorageAccountName: 'terraformtfstate1844'
-              # azure blob container to store the state file
               backendAzureRmContainerName: 'tfstatefiles'
-              # azure blob file name
-              backendAzureRmKey: aks-$(DEV_ENVIRONMENT).tfstate
-              allowTelemetryCollection: false
-          - task: TerraformCLI@2
+              backendAzureRmKey: 'aks-base.tfstate'
+          # - task: TerraformCLI@2
+          #   inputs:
+          #     command: 'plan'
+          #     workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
+          #     environmentServiceName: 'terraform-aks-azurerm-svc-con'
+          #     #commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath)  -var environment=$(QA_ENVIRONMENT) -out $(Pipeline.Workspace)/terraform-manifests-out/$(QA_ENVIRONMENT)-$(Build.BuildId).out'
+          #     allowTelemetryCollection: false
+          - task: TerraformTaskV4@4
             inputs:
+              provider: 'azurerm'
               command: 'plan'
               workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
-              environmentServiceName: 'terraform-aks-azurerm-svc-con'
-              commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath)  -var environment=$(QA_ENVIRONMENT) -out $(Pipeline.Workspace)/terraform-manifests-out/$(QA_ENVIRONMENT)-$(Build.BuildId).out'
-              allowTelemetryCollection: false
-          - task: TerraformCLI@2
+              environmentServiceNameAzureRM: 'terraform-aks-azurerm-svc-con'
+          # - task: TerraformCLI@2
+          #   inputs:
+          #     command: 'apply'
+          #     environmentServiceName: terraform-aks-azurerm-svc-con
+          #     workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
+          #    # commandOptions: '$(Pipeline.Workspace)/terraform-manifests-out/$(DEV_ENVIRONMENT)-$(Build.BuildId).out'
+          #     allowTelemetryCollection: false
+          - task: TerraformTaskV4@4
             inputs:
+              provider: 'azurerm'
               command: 'apply'
-              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests'
-              commandOptions: '$(Pipeline.Workspace)/terraform-manifests-out/$(DEV_ENVIRONMENT)-$(Build.BuildId).out'
-              allowTelemetryCollection: false
+              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
+              environmentServiceNameAzureRM: 'terraform-aks-azurerm-svc-con'
