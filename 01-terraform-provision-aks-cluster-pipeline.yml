@@ -31,7 +31,7 @@ stages:
     #   displayName: Terraform Install
     #   inputs:
     #     terraformVersion: 'latest'
-    - task: TerraformInstaller@1
+    - task: TerraformInstaller@2
       inputs:
         terraformVersion: 'latest'
     - task: TerraformTaskV4@4
@@ -104,7 +104,7 @@ stages:
           #     # azure blob file name
           #     backendAzureRmKey: aks-$(DEV_ENVIRONMENT).tfstate
           #     allowTelemetryCollection: false
-          - task: TerraformInstaller@1
+          - task: TerraformInstaller@2
             inputs:
               terraformVersion: 'latest'
           - task: TerraformTaskV4@4
