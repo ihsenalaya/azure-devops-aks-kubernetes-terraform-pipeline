@@ -30,6 +30,10 @@ stages:
              backendAzureRmStorageAccountName: 'terraformtfstate1844'
              backendAzureRmContainerName: 'tfstatefiles'
              backendAzureRmKey: 'aks-base.tfstate'
-        
+         - task: TerraformTaskV4@4
+           inputs:
+             provider: 'azurerm'
+             command: 'validate'
+             workingDirectory: '$(System.DefaultWorkingDirectory)/manifest1'
          
          
