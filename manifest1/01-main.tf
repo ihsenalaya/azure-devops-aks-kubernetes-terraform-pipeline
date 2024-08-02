@@ -48,4 +48,7 @@ provider "azurerm" {
 resource "random_pet" "aksrandom" {
 
 }
-
+resource "azurerm_resource_group" "example" {
+  name     = "example"
+  location = "West Europe"
+}
