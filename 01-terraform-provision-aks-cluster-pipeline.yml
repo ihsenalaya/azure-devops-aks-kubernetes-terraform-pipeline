@@ -24,7 +24,7 @@ stages:
     - task: PublishPipelineArtifact@1
       displayName: Publish Artifacts
       inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+        targetPath: '$(System.DefaultWorkingDirectory)/manifest'
         artifact: 'terraform-manifests-out'
         publishLocation: 'pipeline'
     - task: TerraformInstaller@0
@@ -36,7 +36,7 @@ stages:
       inputs:
         command: init
         backendType: azurerm
-        workingDirectory: $(System.DefaultWorkingDirectory)/terraform-manifests
+        workingDirectory: $(System.DefaultWorkingDirectory)/manifest
         # Service connection to authorize backend access. Supports Subscription & Management Group Scope
         backendServiceArm: 'terraform-aks-azurerm-svc-con'
         backendAzureRmResourceGroupName: 'terraform-storage-rg'
@@ -50,7 +50,7 @@ stages:
       displayName: Terraform Validate
       inputs:
         command: 'validate'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/manifest'
         allowTelemetryCollection: false
 - stage: DeployAKScluster
   jobs:
@@ -93,6 +93,6 @@ stages:
           - task: TerraformCLI@2
             inputs:
               command: 'apply'
-              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests'
+              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
               commandOptions: '$(Pipeline.Workspace)/terraform-manifests-out/$(DEV_ENVIRONMENT)-$(Build.BuildId).out'
               allowTelemetryCollection: false
