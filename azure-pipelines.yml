@@ -19,15 +19,17 @@ stages:
            inputs:
              targetPath: '$(System.DefaultWorkingDirectory)/manifest'
              publishLocation: 'pipeline'
-        
          - task: TerraformTaskV4@4
            inputs:
              provider: 'azurerm'
              command: 'init'
-             workingDirectory: '(System.DefaultWorkingDirectory)/manifest'
+             workingDirectory: '$(System.DefaultWorkingDirectory)/manifest'
              backendAzureRmUseEntraIdForAuthentication: true
              backendServiceArm: 'terraform-aks-azurerm-svc-con'
              backendAzureRmResourceGroupName: 'terraform-storage-rg'
              backendAzureRmStorageAccountName: 'terraformtfstate1844'
+             backendAzureRmContainerName: 'tfstatefiles'
              backendAzureRmKey: 'aks-base.tfstate'
+        
+         
          
