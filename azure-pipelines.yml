@@ -5,7 +5,9 @@
 
 trigger:
 - master
-
+variables:
+- name: DEV_ENVIRONMENT
+  value: dev
 pool:
   vmImage: ubuntu-latest
 stages:
@@ -35,5 +37,40 @@ stages:
              provider: 'azurerm'
              command: 'validate'
              workingDirectory: '$(System.DefaultWorkingDirectory)/manifest1'
-         
+  - stage: DeployAksCluster
+    jobs:
+    - deployment: DeployAksKluster
+      displayName: DeployAksKluster
+      pool:
+        vmImage: ubuntu-latest
+      environment: $(DEV_ENVIRONMENT)
+      strategy: 
+       runOnce:
+         deploy:
+           steps:
+             - task: TerraformTaskV4@4
+               inputs:
+                 provider: 'azurerm'
+                 command: 'init'
+                 workingDirectory: '$(Pipeline.Workspace)/manifest-out'
+                 backendAzureRmUseEntraIdForAuthentication: true
+                 backendServiceArm: 'aks-terraform'
+                 backendAzureRmResourceGroupName: 'terraform-storage-rg'
+                 backendAzureRmStorageAccountName: 'terraformtfstate1844'
+                 backendAzureRmContainerName: 'tfstatefiles'
+                 backendAzureRmKey: 'aks-base.tfstate'
+             - task: TerraformTaskV4@4
+               inputs:
+                 provider: 'azurerm'
+                 command: 'plan'
+                 workingDirectory: '$(Pipeline.Workspace)/manifest-out'
+                 environmentServiceNameAzureRM: 'aks-terraform'
+             - task: TerraformTaskV4@4
+               inputs:
+                 provider: 'azurerm'
+                 command: 'apply'
+                 workingDirectory: '$(Pipeline.Workspace)/manifest-out'
+                 environmentServiceNameAzureRM: 'aks-terraform'
+        
+          
          
