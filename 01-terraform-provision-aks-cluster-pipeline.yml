@@ -41,7 +41,7 @@ stages:
         backendAzureRmResourceGroupName: 'terraform-storage-rg'
         backendAzureRmStorageAccountName: 'terraformtfstate1844'
         backendAzureRmContainerName: 'tfstatefiles'
-        backendAzureRmKey: 'aks-base.tfstate'
+        backendAzureRmKey: 'terraform-custom-vnet.tfstate'
     # - task: TerraformCLI@0
     #   displayName: 'terraform init'
     #   inputs:
