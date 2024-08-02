@@ -106,7 +106,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/manifest'
+              workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
               backendAzureRmUseEntraIdForAuthentication: true
               backendServiceArm: 'terraform-aks-azurerm-svc-con'
               backendAzureRmResourceGroupName: 'terraform-storage-rg'
