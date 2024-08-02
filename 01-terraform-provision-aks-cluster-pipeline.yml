@@ -81,11 +81,11 @@ stages:
      runOnce:
        deploy:
          steps:
-          # - task: DownloadSecureFile@1
-          #   displayName: download ssh
-          #   name: sshkey
-          #   inputs:
-          #     secureFile: 'aks-terraform-devops-ssh-key-ububtu.pub'
+          - task: DownloadSecureFile@1
+            displayName: download ssh
+            name: sshkey
+            inputs:
+              secureFile: 'aks-terraform-devops-ssh-key-ububtu.pub'
           # - task: TerraformCLI@0
           #   displayName: 'terraform init'
           #   inputs:
