@@ -17,13 +17,13 @@ stages:
          - task: PublishPipelineArtifact@1
            displayName: Publish Artifacts
            inputs:
-             targetPath: '$(System.DefaultWorkingDirectory)/manifest'
+             targetPath: '$(System.DefaultWorkingDirectory)/manifest1'
              publishLocation: 'pipeline'
          - task: TerraformTaskV4@4
            inputs:
              provider: 'azurerm'
              command: 'init'
-             workingDirectory: '$(System.DefaultWorkingDirectory)/manifest'
+             workingDirectory: '$(System.DefaultWorkingDirectory)/manifest1'
              backendAzureRmUseEntraIdForAuthentication: true
              backendServiceArm: 'terraform-aks-azurerm-svc-con'
              backendAzureRmResourceGroupName: 'terraform-storage-rg'
